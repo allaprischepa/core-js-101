@@ -27,8 +27,12 @@
  *  21 => 'Fizz'
  *
  */
-function getFizzBuzz(/* num */) {
-  throw new Error('Not implemented');
+function getFizzBuzz(num) {
+  if (num % 15 === 0) return 'FizzBuzz';
+  if (num % 5 === 0) return 'Buzz';
+  if (num % 3 === 0) return 'Fizz';
+
+  return num;
 }
 
 
@@ -43,8 +47,14 @@ function getFizzBuzz(/* num */) {
  *   5  => 120
  *   10 => 3628800
  */
-function getFactorial(/* n */) {
-  throw new Error('Not implemented');
+function getFactorial(n) {
+  switch (n) {
+    case 1:
+    case 2:
+      return n;
+    default:
+      return n * getFactorial(n - 1);
+  }
 }
 
 
@@ -60,8 +70,14 @@ function getFactorial(/* n */) {
  *   5,10  =>  45 ( = 5+6+7+8+9+10 )
  *   -1,1  =>  0  ( = -1 + 0 + 1 )
  */
-function getSumBetweenNumbers(/* n1, n2 */) {
-  throw new Error('Not implemented');
+function getSumBetweenNumbers(n1, n2) {
+  let sum = 0;
+
+  for (let i = n1; i <= n2; i += 1) {
+    sum += i;
+  }
+
+  return sum;
 }
 
 
@@ -80,8 +96,8 @@ function getSumBetweenNumbers(/* n1, n2 */) {
  *   10,1,1   =>  false
  *   10,10,10 =>  true
  */
-function isTriangle(/* a, b, c */) {
-  throw new Error('Not implemented');
+function isTriangle(a, b, c) {
+  return (a + b) > c && (b + c) > a && (c + a) > b;
 }
 
 
@@ -117,8 +133,26 @@ function isTriangle(/* a, b, c */) {
  *   { top:20, left:20, width: 20, height: 20 }    =>  false
  *
  */
-function doRectanglesOverlap(/* rect1, rect2 */) {
-  throw new Error('Not implemented');
+function doRectanglesOverlap(rect1, rect2) {
+  const noIntersection = (rctng1, rctng2) => {
+    // Check rectangles projections on axes.
+    const noIntersectionX = rctng1.left > rctng2.right || rctng2.left > rctng1.right;
+    const noIntersectionY = rctng1.bottom < rctng2.top || rctng2.bottom < rctng1.top;
+
+    return noIntersectionX || noIntersectionY;
+  };
+
+  // Copy rectangles objects and add bottom and right.
+  const r1 = {};
+  const r2 = {};
+  Object.assign(r1, rect1);
+  Object.assign(r2, rect2);
+  r1.bottom = r1.top + r1.height;
+  r1.right = r1.left + r1.width;
+  r2.bottom = r2.top + r2.height;
+  r2.right = r2.left + r2.width;
+
+  return !noIntersection(r1, r2);
 }
 
 
@@ -148,8 +182,10 @@ function doRectanglesOverlap(/* rect1, rect2 */) {
  *   { center: { x:0, y:0 }, radius:10 },  { x:10, y:10 }   => false
  *
  */
-function isInsideCircle(/* circle, point */) {
-  throw new Error('Not implemented');
+function isInsideCircle(circle, point) {
+  const [x, y, r] = [circle.center.x, circle.center.y, circle.radius];
+  const s = Math.sqrt((x - point.x) ** 2 + (y - point.y) ** 2);
+  return s < r;
 }
 
 
@@ -164,8 +200,13 @@ function isInsideCircle(/* circle, point */) {
  *   'abracadabra'  => 'c'
  *   'entente' => null
  */
-function findFirstSingleChar(/* str */) {
-  throw new Error('Not implemented');
+function findFirstSingleChar(str) {
+  for (let i = 0; i < str.length; i += 1) {
+    const ch = str[i];
+    if (i === str.lastIndexOf(ch) && i === str.indexOf(ch)) return ch;
+  }
+
+  return null;
 }
 
 
@@ -208,8 +249,8 @@ function getIntervalString(/* a, b, isStartIncluded, isEndIncluded */) {
  * 'rotator' => 'rotator'
  * 'noon' => 'noon'
  */
-function reverseString(/* str */) {
-  throw new Error('Not implemented');
+function reverseString(str) {
+  return str.split('').reverse().join('');
 }
 
 
@@ -225,8 +266,8 @@ function reverseString(/* str */) {
  *   87354 => 45378
  *   34143 => 34143
  */
-function reverseInteger(/* num */) {
-  throw new Error('Not implemented');
+function reverseInteger(num) {
+  return +(`${num}`.split('').reverse().join(''));
 }
 
 
@@ -268,10 +309,17 @@ function isCreditCardNumber(/* ccn */) {
  *   10000 ( 1+0+0+0+0 = 1 ) => 1
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
-function getDigitalRoot(/* num */) {
-  throw new Error('Not implemented');
-}
+function getDigitalRoot(num) {
+  let sum = num;
+  // Split the number to array of digits.
+  // Find sum until it becomes less than 10.
+  while (sum >= 10) {
+    sum = `${sum}`.split('');
+    sum = sum.reduce((s, a) => s + +a, 0);
+  }
 
+  return sum;
+}
 
 /**
  * Returns true if the specified string has the balanced brackets and false otherwise.
