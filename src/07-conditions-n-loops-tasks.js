@@ -291,8 +291,28 @@ function reverseInteger(num) {
  *   5436468789016589 => false
  *   4916123456789012 => false
  */
-function isCreditCardNumber(/* ccn */) {
-  throw new Error('Not implemented');
+function isCreditCardNumber(ccn) {
+  let numbers = `${ccn}`.split('').map((n) => +n);
+  const control = numbers.pop();
+
+  numbers = numbers.reverse();
+  numbers = numbers.map((n, ind) => {
+    if (ind % 2 === 0) {
+      let newN = n * 2;
+
+      if (newN >= 10) {
+        newN = `${newN}`.split('').reduce((s, a) => s + +a, 0);
+      }
+
+      return newN;
+    }
+
+    return n;
+  });
+
+  const sum = numbers.reduce((s, a) => s + a, 0);
+
+  return (10 - (sum % 10)) % 10 === control;
 }
 
 /**
@@ -342,10 +362,40 @@ function getDigitalRoot(num) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
-}
+function isBracketsBalanced(str) {
+  const bracketsStack = [];
+  const bracketsPair = {
+    '[': ']',
+    '{': '}',
+    '(': ')',
+    '<': '>',
+  };
+  const openBrackets = Object.keys(bracketsPair);
+  const closedBrackets = Object.values(bracketsPair);
 
+  const getKeyByValue = (object, value) => {
+    const keys = Object.keys(object).filter((key) => object[key] === value);
+
+    return keys.length === 1 ? keys.pop() : keys;
+  };
+
+  for (let i = 0; i < str.length; i += 1) {
+    const char = str[i];
+
+    if (openBrackets.includes(char)) {
+      bracketsStack.push(char);
+    } else if (closedBrackets.includes(char)) {
+      if (bracketsStack.length < 1) return false;
+
+      const openBracket = getKeyByValue(bracketsPair, char);
+      const lastBracket = bracketsStack.pop();
+
+      if (openBracket !== lastBracket) return false;
+    }
+  }
+
+  return bracketsStack.length === 0;
+}
 
 /**
  * Returns the string with n-ary (binary, ternary, etc, where n <= 10)
@@ -384,8 +434,21 @@ function toNaryString(/* num, n */) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  const common = [];
+  const regex = /(\/)/;
+  const splited = pathes.map((path) => path.split(regex));
+  splited.sort((a, b) => b.length > a.length);
+  const firstPath = splited.shift();
+
+  for (let i = 0; i < firstPath.length; i += 1) {
+    const path = firstPath[i];
+    if (splited.every((path2) => path2[i] === path)) {
+      common.push(path);
+    } else break;
+  }
+
+  return common.join('');
 }
 
 
@@ -407,8 +470,22 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const l = m1.length;
+  const count = m2.length;
+  const res = Array.from({ length: l }, () => Array(l).fill(0));
+
+  for (let r = 0; r < l; r += 1) {
+    for (let c = 0; c < l; c += 1) {
+      let sum = 0;
+      for (let ind = 0; ind < count; ind += 1) {
+        sum += m1[r][ind] * m2[ind][c];
+      }
+      res[r][c] = sum;
+    }
+  }
+
+  return res;
 }
 
 
@@ -442,8 +519,67 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  const l = position.length;
+
+  const checkEvery = (arr, val) => arr.every((el) => el === val);
+
+  const getRow = (ind) => {
+    const row = [];
+
+    for (let i = 0; i < l; i += 1) {
+      row.push(position[ind][i]);
+    }
+
+    return row;
+  };
+
+  const getColumn = (ind) => {
+    const column = [];
+    for (let i = 0; i < l; i += 1) {
+      column.push(position[i][ind]);
+    }
+
+    return column;
+  };
+
+  const getDiagonal = (n) => {
+    const diagonal = [];
+
+    if (n) {
+      for (let i = 0; i < l; i += 1) {
+        diagonal.push(position[i][i]);
+      }
+    } else {
+      for (let i = 0, j = l - 1; i < l; i += 1, j -= 1) {
+        diagonal.push(position[i][j]);
+      }
+    }
+
+    return diagonal;
+  };
+
+  // Check rows and columns first.
+  for (let i = 0; i < l; i += 1) {
+    const row = getRow(i);
+    if (checkEvery(row, 'X')) return 'X';
+    if (checkEvery(row, '0')) return '0';
+
+    const column = getColumn(i);
+    if (checkEvery(column, 'X')) return 'X';
+    if (checkEvery(column, '0')) return '0';
+  }
+
+  // Check diagonals.
+  const diagonal1 = getDiagonal(1);
+  const diagonal2 = getDiagonal(0);
+
+  if (checkEvery(diagonal1, 'X')) return 'X';
+  if (checkEvery(diagonal1, '0')) return '0';
+  if (checkEvery(diagonal2, 'X')) return 'X';
+  if (checkEvery(diagonal2, '0')) return '0';
+
+  return undefined;
 }
 
 
